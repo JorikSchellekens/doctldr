@@ -1,0 +1,196 @@
+.TH DOCTLDR 1 "2024" "Version 1.0" "User Commands"
+.SH NAME
+doctldr \- generate concise documentation summaries using LLMs
+.SH SYNOPSIS
+.B doctldr
+[\fB\-o\fR \fIoutput-file\fR]
+[\fB\-f\fR \fIformat\fR]
+[\fB\-\-model\fR \fImodel-name\fR]
+[\fB\-\-max\-tokens\fR \fInumber\fR]
+[\fB\-v\fR]
+[\fB\-c\fR \fIconfig-file\fR]
+[\fB\-\-dry\-run\fR]
+[\fB\-\-debug\fR]
+\fIinput-directory\fR...
+.SH DESCRIPTION
+.B doctldr
+processes documentation directories and generates ultra-concise summaries optimized for LLM context, while preserving critical technical information. It supports multiple input formats (Markdown, RST, HTML, Plain Text) and can output in various formats (Markdown, JSON, Plain Text).
+
+The tool is designed to create summaries that:
+.IP \[bu] 2
+Maintain technical accuracy and precision
+.IP \[bu]
+Remove redundant or commonly known information
+.IP \[bu]
+Optimize for use as context in other LLM workflows
+.IP \[bu]
+Preserve critical implementation details
+.SH OPTIONS
+.TP
+.BR \-o ", " \-\-output =\fIFILE\fR
+Write output to FILE instead of stdout. The parent directory must exist.
+.TP
+.BR \-f ", " \-\-format =\fIFORMAT\fR
+Output format (md, json, txt). Default: md
+.br
+.B md
+- Markdown format with headers and metadata
+.br
+.B json
+- Structured JSON with full metadata
+.br
+.B txt
+- Plain text with minimal formatting
+.TP
+.BR \-\-model =\fIMODEL\fR
+Specify LLM model to use. Default: gpt-4
+.br
+Supported models: gpt-4, gpt-3.5-turbo
+.TP
+.BR \-\-max\-tokens =\fINUMBER\fR
+Maximum tokens in summary. Default: 2048
+.TP
+.BR \-v ", " \-\-verbose
+Enable verbose output, showing processing details
+.TP
+.BR \-c ", " \-\-config =\fIFILE\fR
+Use custom config file instead of default
+.TP
+.BR \-\-dry\-run
+Process without generating output, useful for testing
+.TP
+.BR \-\-debug
+Enable debug logging with detailed information
+.TP
+.BR \-h ", " \-\-help
+Display help message
+.SH CONFIGURATION
+The tool can be configured via a TOML file at ~/.config/doctldr/config.toml:
+.PP
+.nf
+.RS
+[default]
+model = "gpt-4"
+max_tokens = 2048
+format = "md"
+verbose = false
+
+[api]
+provider = "openai"
+key_env = "OPENAI_API_KEY"
+
+[processing]
+include_patterns = ["*.md", "*.rst", "*.txt", "*.html"]
+exclude_patterns = ["node_modules", ".git"]
+max_depth = 5
+
+[output]
+default_format = "md"
+include_metadata = true
+.RE
+.fi
+.SH EXAMPLES
+.SS Basic Usage
+.PP
+Summarize a documentation directory:
+.PP
+.nf
+.RS
+doctldr ./docs -o summary.md
+.RE
+.fi
+.PP
+Process multiple directories:
+.PP
+.nf
+.RS
+doctldr ./docs ./api-docs -o combined.md
+.RE
+.fi
+.SS Advanced Usage
+.PP
+Use a different model with custom token limit:
+.PP
+.nf
+.RS
+doctldr ./docs --model gpt-3.5-turbo --max-tokens 1024
+.RE
+.fi
+.PP
+Output as JSON with metadata:
+.PP
+.nf
+.RS
+doctldr ./docs -f json -o summary.json
+.RE
+.fi
+.PP
+Dry run with debug information:
+.PP
+.nf
+.RS
+doctldr ./docs --dry-run --debug
+.RE
+.fi
+.SH OUTPUT FORMATS
+.SS Markdown (default)
+.PP
+.nf
+.RS
+# Summary of ./docs/api.md
+
+API documentation summary...
+
+---
+_Compressed to 15.3% of original size_
+.RE
+.fi
+.SS JSON
+.PP
+.nf
+.RS
+{
+  "summaries": [
+    {
+      "original_path": "./docs/api.md",
+      "summary": "API documentation summary...",
+      "metadata": {
+        "original_size": 10240,
+        "summary_size": 1568,
+        "compression_ratio": 0.153
+      }
+    }
+  ]
+}
+.RE
+.fi
+.SS Plain Text
+.PP
+.nf
+.RS
+=== ./docs/api.md ===
+
+API documentation summary...
+.RE
+.fi
+.SH EXIT STATUS
+.TP
+.B 0
+Success
+.TP
+.B 1
+Various errors (invalid input, API errors, etc.)
+.SH ENVIRONMENT
+.TP
+.B OPENAI_API_KEY
+OpenAI API key for LLM access (required)
+.SH FILES
+.TP
+.I ~/.config/doctldr/config.toml
+Default configuration file
+.SH BUGS
+Report bugs at: https://github.com/yourusername/doctldr/issues
+.SH AUTHOR
+Your Name <your.email@example.com>
+.SH COPYRIGHT
+Copyright © 2024 Your Name. License MIT. 
