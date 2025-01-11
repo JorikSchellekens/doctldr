@@ -1,0 +1,48 @@
+[package]
+name = "doctldr"
+version = "0.1.0"
+edition = "2021"
+description = "A tool that uses LLMs to create concise documentation summaries"
+authors = ["Your Name <your.email@example.com>"]
+license = "MIT"
+
+[dependencies]
+# CLI
+clap = { version = "4.4", features = ["derive"] }
+dirs = "5.0"           # For config file locations
+toml = "0.8"          # Config file parsing
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"    # JSON output format
+
+# Async runtime
+tokio = { version = "1.35", features = ["full"] }
+
+# HTTP client for API calls
+reqwest = { version = "0.11", features = ["json"] }
+
+# Error handling
+thiserror = "1.0"
+anyhow = "1.0"
+
+# Logging
+tracing = "0.1"
+tracing-subscriber = "0.3"
+
+# File handling
+walkdir = "2.4"       # Directory traversal
+ignore = "0.4"        # .gitignore-style file filtering
+encoding_rs = "0.8"   # Text encoding detection and handling
+
+# Markdown and text processing
+pulldown-cmark = "0.9"    # Markdown parsing
+html2text = "0.6"         # HTML to text conversion
+regex = "1.10"           # Text processing
+
+# Async utilities
+futures = "0.3"
+async-trait = "0.1"
+
+[dev-dependencies]
+tempfile = "3.9"      # Temporary files for testing
+mockall = "0.12"      # Mocking for tests
+tokio-test = "0.4"    # Async testing utilities
