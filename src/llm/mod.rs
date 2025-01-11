@@ -58,9 +58,26 @@ impl OpenAiProvider {
 
     fn create_summary_prompt(content: &str) -> String {
         format!(
-            "Create a concise technical summary of the following documentation. \
-            Focus on preserving critical technical information while removing redundant or commonly known details. \
-            Use precise technical terminology. The summary should be optimized for use as context in other LLM workflows.\n\n{}",
+            "Create a technical summary optimized for an LLM to understand how to use and implement this tool/feature. Focus on:
+1. Function signatures, types, and interfaces
+2. Concrete usage examples with actual parameters
+3. Key implementation details and data structures
+4. API endpoints and their request/response formats
+5. Configuration options with specific valid values
+6. Command-line usage patterns with real examples
+
+Exclude:
+- General descriptions without technical details
+- Marketing or promotional content
+- Basic setup instructions unless they contain specific commands
+- Conceptual explanations without code or concrete examples
+
+Format the response to maximize information density while maintaining clear structure.
+If the documentation contains code examples, preserve them with their context.
+
+Documentation to summarize:
+
+{}",
             content
         )
     }
@@ -74,7 +91,10 @@ impl LlmProvider for OpenAiProvider {
             messages: vec![
                 OpenAiMessage {
                     role: "system".to_string(),
-                    content: "You are a technical documentation summarizer. Your goal is to create ultra-concise summaries that preserve critical technical information while eliminating redundancy.".to_string(),
+                    content: "You are a technical documentation processor focused on creating summaries for LLM consumption. \
+                    Your goal is to extract and preserve implementation details, concrete examples, and technical specifications \
+                    while eliminating general descriptions and conceptual explanations. Prioritize code examples, API specifications, \
+                    and exact usage patterns. Format your responses to maximize information density for LLM parsing.".to_string(),
                 },
                 OpenAiMessage {
                     role: "user".to_string(),
@@ -82,7 +102,7 @@ impl LlmProvider for OpenAiProvider {
                 },
             ],
             max_tokens,
-            temperature: 0.3,
+            temperature: 0.1,
         };
 
         let response = self.client
